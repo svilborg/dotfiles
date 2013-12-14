@@ -50,6 +50,8 @@ alias sharethisdir="echo 'now sharing cur directory at port 9000'; python -m Sim
 # Get all IPs OSX/Linux compatable
 alias myip='curl "http://www.networksecuritytoolkit.org/nst/cgi-bin/ip.cgi"'
 
+#Get IP
+alias ipaddr="ifconfig | grep 'inet addr'"
 
 alias wgetdir="wget -r -nH --no-parent"
 alias wgetmirror="wget --mirror -U Firefox/3.0 -p -erobots=off --html-extension --convert-links"

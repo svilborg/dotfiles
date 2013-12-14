@@ -1,0 +1,22 @@
+# ~/bashrc/.bash_apt: Apt Aliases
+
+
+#--------------------Apt Get-----------------------------------------------------------
+
+apt-clean () {
+	sudo apt-get update
+	sudo apt-get upgrade
+	sudo apt-get clean
+	sudo apt-get autoclean
+	sudo apt-get autoremove
+	sudo deborphan | xargs sudo apt-get remove --purge
+}
+
+alias apt-cs="apt-cache search"
+alias apt-i="sudo apt-get -y install"
+alias apt-r="sudo apt-get remove"
+alias apt-a="sudo apt-get autoremove"
+alias apt-ug="sudo apt-get upgrade"
+alias apt-u="sudo apt-get update"
+
+alias searchy="apt-cache search"

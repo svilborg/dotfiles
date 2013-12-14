@@ -27,6 +27,7 @@ function include_d {
 }
 
 include_d .bash_aliases
+include_d .bash_aliases_apt
 include_d .bash_aliases_fs
 include_d .bash_aliases_mysql
 include_d .bash_aliases_svn
