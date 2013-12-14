@@ -1,0 +1,81 @@
+# [user]
+# 	name = 
+# 	email = @gmail.com
+
+[core]
+	autocrlf = input
+
+[color]
+	ui = true
+
+[color "status"]
+    added = yellow
+	changed = green
+	untracked = cyan
+
+[color "diff"]
+    meta = yellow
+	frag = magenta
+	old = red
+	new = green
+	whitespace = red reverse
+
+[alias]
+    st = status
+	s = status
+	ci = commit -v
+	cm = commit -m
+	br = branch
+	co = checkout
+	ls = ls-files
+	dt = difftool
+	mt = mergetool
+
+    # Commit all changes
+    ca = commit -a    
+    # Commit all changes
+    cam = commit -a -m
+	# Switch to a branch, creating it if necessary
+	go = checkout -B
+
+    #figure out what a revision is
+    human = name-rev --name-only --refs=refs/heads/*
+
+    # history
+    h = log --pretty=format:'%Cred%h%Creset (%Cgreen%cr%Creset) [%Cblue%an%Creset]%C(yellow)%d%Creset %s ' --graph --abbrev-commit --date=relative --topo-order
+
+    # flat history
+    hf = log --pretty=format:'%Cred%h%Creset (%Cgreen%cr%Creset) [%Cblue%an%Creset]%C(yellow)%d%Creset %s ' --abbrev-commit --date=relative --date-order --no-merges
+
+    hist-refs = log --all --graph --decorate --oneline --simplify-by-decoration --no-merges
+
+    hp = log -p --abbrev-commit --date=relative --color-words --abbrev
+	hs = log -M --summary --stat --abbrev-commit --date=relative --no-merges --date-order
+
+    #diff
+    staged = diff --patience --cached --patch-with-stat
+	un = diff --patience --patch-with-stat
+	unstaged = diff --patience --patch-with-stat
+	both = diff HEAD --patch-with-stat
+
+	#diff name
+    dn = diff --name-status -r
+	#diff stat
+	ds = diff --stat -r
+
+    type = cat-file -t
+	dump = cat-file -p
+
+    # my history, ignore quiting less error
+    me = !git h --author="svilborg" || TRUE
+
+    ls-ignored = ls-files --others -i --exclude-standard
+
+    # remove the top commit, to unstaged index
+    pop = reset HEAD^
+
+    # list branches sorted by last modified
+    b = "!git for-each-ref --sort='-authordate' --format='%(authordate)%09%(objectname:short)%09%(refname)' refs/heads | sed -e 's-refs/heads/--'"
+
+    # list aliases
+    la = "!git config -l | grep alias | cut -c 7-"
