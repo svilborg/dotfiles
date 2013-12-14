@@ -1,0 +1,40 @@
+# .bash_aliases: MySQL Commands Bash Aliases
+
+export MYSQL_DEFAULT_DB=mysql
+
+mqusedatabase (){
+	export MYSQL_DEFAULT_DB=$@
+}
+
+mqrun (){
+	mysql -u root -t -D ${MYSQL_DEFAULT_DB} -vvv -e "$@" 
+}
+
+mqrunfile (){
+	mysql -u root -t -vvv ${MYSQL_DEFAULT_DB} < $@ 
+}
+
+mqrunfiletofile (){
+	mysql -u root -t -vvv ${MYSQL_DEFAULT_DB} < $1 >> $2
+}
+
+mqrunfiletoeditor (){
+	mysql -u root -t -vvv ${MYSQL_DEFAULT_DB} < $1 | vim -
+}
+
+alias mqlistdatabases='mqrun "show databases"'
+alias mqlisttables='mqrun "show tables"'
+
+mqlistfields(){
+	mqrun "describe $@"
+}
+
+mqcreatedatabase(){
+	mysqladmin -u root create $@
+	echo "$@ Created"
+}
+
+mqdropdatabase(){
+	echo Warning 
+	mysqladmin -u root drop $@
+}

@@ -1,0 +1,72 @@
+# ~/bashrc/.bash_aliases: File System Bash Aliases
+
+# enable color support of ls and also add handy aliases
+alias ls='ls --color=auto'
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+
+alias df="df -h"
+
+alias rmsvn='find . -name ".svn" -exec rm -rf {} \;' # Delete .svn folders
+alias dsstore="find . -name '*.DS_Store' -type f -ls -delete" # Recursively delete `.DS_Store` files
+
+# Create a new directory and enter it
+function md() {
+  mkdir -p "$@" && cd "$@"
+}
+
+#copies folder and all sub files and folders, preserving security and dates
+alias cp_folder="cp -Rpv"
+
+# chown curren dir
+alias own="sudo chown -R $USER"
+
+alias tree='tree -Csu'
+
+#great for finding the current "real" size of all folders/files
+alias ducks="du -k | sort -n | tail -n 200 | perl -ne 'if ( /^(\d+)\s+(.*\$)/){\$l=log(\$1+.1);\$m=int(\$l/log(1024)); printf (\"%6.1f\t%s\t%25s %s\n\",(\$1/(2**(10*\$m))),((\"K\",\"M\",\"G\",\"T\",\"P\")[\$m]),\"*\"x (1.5*\$l),\$2);}' "
+
+# ---------------- History ------------------------------------------------------------
+alias h='history | tail -n 30'
+
+hf(){ grep "$@" ~/.bash_history; }
+
+#-------------------- Search ----------------------------------------------------------
+
+g() {
+	grep -Ri "$1" *
+}
+
+f() {
+	find . -iname "*$**"
+}
+
+alias paux="ps -A|grep -i"
+
+# Extract Archive
+function extract()
+{
+     if [ -f $1 ] ; then
+         case $1 in
+             *.tar.bz2) tar xvjf $1 ;;
+             *.tar.gz) tar xvzf $1 ;;
+             *.bz2) bunzip2 $1 ;;
+             *.rar) unrar x $1 ;;
+             *.gz) gunzip $1 ;;
+             *.tar) tar xvf $1 ;;
+             *.tbz2) tar xvjf $1 ;;
+             *.tgz) tar xvzf $1 ;;
+             *.zip) unzip $1 ;;
+             *.Z) uncompress $1 ;;
+             *.7z) 7z x $1 ;;
+             *) echo "'$1' cannot be extracted via >extract<" ;;
+         esac
+     else
+         echo "'$1' is not a valid file"
+     fi
+}

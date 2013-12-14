@@ -1,0 +1,34 @@
+# ~/bashrc/.bash_: Bash includes
+
+DOTFILE_DEBUG=true
+
+function output() {
+	if $DOTFILE_DEBUG; then
+		echo $1
+	fi
+}
+
+function include_d {
+	file=$1
+	if $DOTFILE_DEBUG; then
+		dir=./$file
+	else 
+		dir=~/bashrc/$file
+	fi
+
+	output "-------------------"
+
+	if [ -f $dir ]; then
+		. $dir
+		output "OK including . ~/bashrc/$file"
+	else 
+		output "Error including . ~/bashrc/$file"
+	fi
+}
+
+include_d .bash_aliases
+include_d .bash_aliases_fs
+include_d .bash_aliases_mysql
+include_d .bash_aliases_svn
+
+include_d .bash_completion_django

@@ -1,0 +1,71 @@
+# .bash_aliases: MySQL Commands Bash Aliases
+
+# Colorize SVN
+function svncolor {
+
+	if [ "x$1" = "xci" ] || [ "x$1" = "xcommit" ] || [ "x$1" = "xadd" ]
+		then
+		command svn "$@";
+		return;
+	fi
+
+
+	command svn "$@" | awk '
+	BEGIN {
+		cpt_c=0;
+	}
+	{
+		if ($1=="C") {
+			cpt_c=cpt_c+1;
+			print "\033[31m" $0 "\033[00m"; # Conflicts are displayed in red
+		}
+	else if ($1=="M") {
+		print "\033[31m" $0 "\033[00m"; # Modified in red
+	}
+else if ($1=="A") {
+	print "\033[32m" $0 "\033[00m"; # Add in green
+}
+else if ($1=="?") {
+	print "\033[36m" $0 "\033[00m"; # New in cyan
+}
+else if ($1=="D") {
+	print "\033[31m" $0 "\033[00m"; # Delete in red
+}
+else if ($1=="U") {
+	print "\033[35m" $0 "\033[00m"; # Updated in light magenta
+}
+else if ($1=="X") {
+	print "\033[33m" $0 "\033[00m"; # No changes in yellow.
+}
+else if ($1=="At" || $1 == "External") {
+	print "\033[33m" $0 "\033[00m"; # Revision numbers in brown.
+}
+else {
+	print $0; # No color, just print the line
+}
+}
+END {
+	print cpt_c, " conflicts are found.";
+}';
+}
+
+alias sv='svn' # SVN
+alias svimport='sv import'  # SVN Import
+alias svcheckout='sv checkout' # SVN Checkout
+alias svstatus='sv status'  # SVN Status
+alias svadd='sv add' # SVN Add
+alias svcommit='sv commit' # SVN Commit
+alias svupdate='sv update' # SVN Update
+alias svstatusremote='sv status --show-updates' # Show status here and on the server
+alias svaddall='sv status | grep "^\?" | awk "{print \$2}" | xargs svn add'
+alias svdelete='sv delete'
+alias svhelp='sv help'
+alias svblame='sv blame'
+alias svexcludeswpfiles='sv propset svn:ignore "*.swp" .'
+alias svdeleteall='sv status | grep "^\!" | awk "{print \$2}" | xargs svn delete'
+alias svlastlog='svn log -v -l 10 | less'
+
+svinfo () {
+	sv info $@
+	sv log $@
+}
