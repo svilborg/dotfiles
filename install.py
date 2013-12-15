@@ -5,7 +5,7 @@ import os
 import sys
 import getopt
 import subprocess
-from shutil import copyfile, rmtree, copy
+from shutil import rmtree, copy
 
 homeDir = os.getenv("HOME") + "/"
 bkpDir = homeDir + "bashrc_bkp/"
@@ -42,7 +42,7 @@ def backup():
     for file in files:
         if os.path.exists(homeDir + file):
             print "Backup file - ~." + file
-            copyfile(homeDir + file, bkpDir + file)
+            copy(homeDir + file, bkpDir + file)
 
     pass
 
@@ -91,7 +91,7 @@ def install_bashrc():
 
     print "Replace .bashrc"
 
-    print copyfile(tmpDir + ".bashrc", homeDir + ".bashrc")
+    print copy(tmpDir + ".bashrc", homeDir + ".bashrc")
 
     pass
 
@@ -169,12 +169,13 @@ def main(argv):
     """
 
     try:
-        opts, args = getopt.getopt(argv, "hi:r")
+        opts, args = getopt.getopt(argv, "hir")
     except getopt.GetoptError:
         print info
         sys.exit(2)
 
     for opt, arg in opts:
+        print opt
         if opt == '-h':
             print info
 
