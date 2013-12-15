@@ -48,7 +48,7 @@ def backup():
 
 
 def checkout():
-    
+
     print "Cloning repo"
 
     try:
@@ -118,16 +118,14 @@ def install_bin():
 
     pass
 
-def reload_bashrc ():
+
+def reload_bashrc():
     print "Reload .bashrc"
-    print "~/bin/reload_bashrc.sh"
+
     try:
-        output = subprocess.check_output(["~/bin/reload_bashrc.sh"])
-        print output
+        output = subprocess.check_output(['./bin/reload_bashrc.sh', '$HOME'])
+
         pass
-    except subprocess.CalledProcessError, e:
-        print "CalledProcessError"
-        print e
     except Exception, e:
         print e
     else:
@@ -203,7 +201,6 @@ def main(argv):
         sys.exit(2)
 
     for opt, arg in opts:
-        print opt
         if opt == '-h':
             print info
 
