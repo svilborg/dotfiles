@@ -120,9 +120,9 @@ def install_bin():
 
 def reload_bashrc ():
     print "Reload .bashrc"
-
+    print "~/bin/reload_bashrc.sh"
     try:
-        output = subprocess.check_output(["/bin/reload_bashrc.sh"])
+        output = subprocess.check_output(["~/bin/reload_bashrc.sh"])
         print output
         pass
     except subprocess.CalledProcessError, e:
