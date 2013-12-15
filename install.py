@@ -2,99 +2,189 @@
 # encoding=utf8
 
 import os
+import sys
+import getopt
 import subprocess
 from shutil import copyfile, rmtree, copy
 
 homeDir = os.getenv("HOME") + "/"
-bkpDir  = homeDir + "bashrc_bkp/"
+bkpDir = homeDir + "bashrc_bkp/"
 bashDir = homeDir + "bashrc/"
-tmpDir  = homeDir + "bashrc_tmp/"
+tmpDir = homeDir + "bashrc_tmp/"
 
 repoUrl = "https://github.com/svilborg/dotfiles"
 
-files   = [".bashrc", ".bash_logout", ".gitconfig"]
+files = [".bashrc", ".bash_logout", ".gitconfig"]
 
-def cleanup () :
 
-	if os.path.exists(bashDir) :
-		rmtree(bashDir)
-	
-	if os.path.exists(tmpDir) :
-		rmtree(tmpDir)
+def cleanupBash():
 
-	pass
+    if os.path.exists(bashDir):
+        rmtree(bashDir)
 
-def backup () :
+    pass
 
-	if not os.path.exists(bkpDir) :
-		print "Create backup dir - " + bkpDir
-		os.makedirs(bkpDir)
 
-	for file in files:
-		if os.path.exists(homeDir + file) :
-			print "Backup file - ~." + file
-			copyfile(homeDir + file, bkpDir + file)
-		
-	pass
+def cleanupTmp():
 
-def checkout () :
-	try:
-		output = subprocess.check_output(["git","clone", "--recursive", repoUrl, tmpDir])
-		pass
-	except subprocess.CalledProcessError, e:
-	 	print "CalledProcessError"
-	except Exception, e:
-		print "Error - " + e.message
-	else:
-		pass
-	finally:
-		pass
+    if os.path.exists(tmpDir):
+        rmtree(tmpDir)
 
-	pass
+    pass
 
-def install_aliases () :
 
-	# Create Destination Dir
-	if not os.path.exists(bashDir) :
-		print "Create bashrc dir - " + bashDir
-		os.makedirs(bashDir)
+def backup():
 
-	# Copy from Destination to Bashrc Dir
-	src_files = os.listdir(tmpDir + "/bashrc/")
-	
-	print "Coping aliases"
-	
-	for file in src_files :
-		fullFile = os.path.join(tmpDir + "/bashrc/", file)
+    if not os.path.exists(bkpDir):
+        print "Create backup dir - " + bkpDir
+        os.makedirs(bkpDir)
 
-		if (os.path.isfile(fullFile)):
-			copy(fullFile, bashDir + file)
+    for file in files:
+        if os.path.exists(homeDir + file):
+            print "Backup file - ~." + file
+            copyfile(homeDir + file, bkpDir + file)
 
-	pass
+    pass
 
-def install_bashrc () :
-	print "Replace .bashrc"
 
-	print copyfile(tmpDir + ".bashrc", homeDir + ".bashrc")
+def checkout():
 
-	pass
+    try:
+        output = subprocess.check_output(
+            ["git", "clone", "--recursive", repoUrl, tmpDir])
+        pass
+    except subprocess.CalledProcessError, e:
+        print "CalledProcessError"
+    except Exception, e:
+        print "Error - " + e.message
+    else:
+        pass
+    finally:
+        pass
 
-def install () :
+    pass
 
-	cleanup()
 
-	backup()
+def install_aliases():
 
-	checkout()
+    # Create Destination Dir
+    if not os.path.exists(bashDir):
+        print "Create bashrc dir - " + bashDir
+        os.makedirs(bashDir)
 
-	install_aliases()
+    # Copy from Destination to Bashrc Dir
+    src_files = os.listdir(tmpDir + "/bashrc/")
 
-	install_bashrc()
+    print "Copying aliases"
 
-	pass
+    for file in src_files:
+        fullFile = os.path.join(tmpDir + "/bashrc/", file)
 
-if __name__ == '__main__':
+        if (os.path.isfile(fullFile)):
+            copy(fullFile, bashDir + file)
 
-	install()
+    pass
 
-	print "Installed"
+
+def install_bashrc():
+    """ Install Bashrc """
+
+    print "Replace .bashrc"
+
+    print copyfile(tmpDir + ".bashrc", homeDir + ".bashrc")
+
+    pass
+
+
+def install_bin():
+
+    print "Install bin"
+
+    # Copy from Destination to Bashrc Dir
+    src_files = os.listdir(tmpDir + "/bin/")
+
+    print "Copying bin files"
+
+    for file in src_files:
+        fullFile = os.path.join(tmpDir + "/bin/", file)
+
+        if (os.path.isfile(fullFile)):
+            copy(fullFile, homeDir + "bin/" + file)
+
+    pass
+
+
+def revertHomeFiles():
+
+    src_files = os.listdir(bkpDir)
+
+    for file in src_files:
+        fullFile = os.path.join(bkpDir, file)
+
+        if (os.path.isfile(fullFile)):
+            print "Reverting " + file
+            copy(fullFile, homeDir + file)
+
+    pass
+
+
+def install():
+
+    cleanupBash()
+
+    cleanupTmp()
+
+    backup()
+
+    checkout()
+
+    install_aliases()
+
+    install_bashrc()
+
+    install_bin()
+
+    print "Installed"
+
+    pass
+
+
+def revert():
+
+    revertHomeFiles()
+
+    cleanupBash()
+
+    cleanupTmp()
+
+    print "Reverted"
+
+    pass
+
+def main(argv):
+    info = """
+    Usage : 
+    Install - install.py -i 
+    Uninstall - install.py -r
+    """
+
+    try:
+        opts, args = getopt.getopt(argv, "hi:r")
+    except getopt.GetoptError:
+        print info
+        sys.exit(2)
+
+    for opt, arg in opts:
+        if opt == '-h':
+            print info
+
+            sys.exit()
+        elif opt in ("-i"):
+            install()
+        elif opt in ("-r"):
+            revert()
+
+    print 'Done'
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
