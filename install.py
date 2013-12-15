@@ -48,6 +48,8 @@ def backup():
 
 
 def checkout():
+    
+    print "Cloning repo"
 
     try:
         output = subprocess.check_output(
@@ -55,8 +57,9 @@ def checkout():
         pass
     except subprocess.CalledProcessError, e:
         print "CalledProcessError"
+        print e
     except Exception, e:
-        print "Error - " + e.message
+        print e
     else:
         pass
     finally:
@@ -86,12 +89,14 @@ def install_aliases():
     pass
 
 
-def install_bashrc():
+def install_files():
     """ Install Bashrc """
 
     print "Replace .bashrc"
 
-    print copy(tmpDir + ".bashrc", homeDir + ".bashrc")
+    for file in files:
+        print "Replace file - ~." + file
+        copy(tmpDir + file, homeDir + file)
 
     pass
 
@@ -110,6 +115,25 @@ def install_bin():
 
         if (os.path.isfile(fullFile)):
             copy(fullFile, homeDir + "bin/" + file)
+
+    pass
+
+def reload_bashrc ():
+    print "Reload .bashrc"
+
+    try:
+        output = subprocess.check_output(["/bin/reload_bashrc.sh"])
+        print output
+        pass
+    except subprocess.CalledProcessError, e:
+        print "CalledProcessError"
+        print e
+    except Exception, e:
+        print e
+    else:
+        pass
+    finally:
+        pass
 
     pass
 
@@ -140,9 +164,11 @@ def install():
 
     install_aliases()
 
-    install_bashrc()
+    install_files()
 
     install_bin()
+
+    reload_bashrc()
 
     print "Installed"
 
@@ -166,11 +192,12 @@ def main(argv):
     info = """
     Usage : 
     Install - install.py -i 
-    Uninstall - install.py -r
+    Uninstall - install.py -u
+    Reload .bashrc - install.py -u
     """
 
     try:
-        opts, args = getopt.getopt(argv, "hir")
+        opts, args = getopt.getopt(argv, "hiur")
     except getopt.GetoptError:
         print info
         sys.exit(2)
@@ -184,6 +211,8 @@ def main(argv):
         elif opt in ("-i"):
             install()
         elif opt in ("-r"):
+            reload_bashrc()
+        elif opt in ("-u"):
             revert()
 
     print 'Done'
