@@ -1,6 +1,6 @@
 # ~/bashrc/.bash_: Bash includes
 
-DOTFILE_DEBUG=true
+DOTFILE_DEBUG=false
 
 function output() {
 	if $DOTFILE_DEBUG; then

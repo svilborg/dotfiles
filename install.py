@@ -32,6 +32,13 @@ def cleanup_tmp():
 
     pass
 
+def cleanup_bkp():
+
+    if os.path.exists(bkpDir):
+        rmtree(bkpDir)
+
+    pass
+
 
 def backup():
 
@@ -193,11 +200,12 @@ def main(argv):
     Usage : 
     Install - install.py -i 
     Uninstall - install.py -u
+    Clean backup - install.py -c
     Reload .bashrc - install.py -u
     """
 
     try:
-        opts, args = getopt.getopt(argv, "hiur")
+        opts, args = getopt.getopt(argv, "hiurc")
     except getopt.GetoptError:
         print info
         sys.exit(2)
@@ -214,6 +222,9 @@ def main(argv):
                 reload_bashrc()
             elif opt in ("-u"):
                 revert()
+            elif opt in ("-c"):
+                print "Clean backup"
+                cleanup_bkp()
             else:
                 print info
     else:
