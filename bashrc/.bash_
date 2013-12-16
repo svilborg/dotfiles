@@ -1,6 +1,6 @@
 # ~/bashrc/.bash_: Bash includes
 
-DOTFILE_DEBUG=false
+DOTFILE_DEBUG=true
 
 function output() {
 	if $DOTFILE_DEBUG; then
@@ -9,13 +9,14 @@ function output() {
 }
 
 function include_d {
-	file=$1
 
-	if [ -f ~/bashrc/$file ]; then
-		. ~/bashrc/$file
-		output "OK including . ~/bashrc/$file"
+	dir=~/.bashrc_include/$1
+
+	if [ -f $dir ]; then
+		. $dir
+		output "OK including . $dir"
 	else 
-		output "Error including . ~/bashrc/$file"
+		output "Error including . $dir"
 	fi
 }
 
