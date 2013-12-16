@@ -8,16 +8,16 @@ import subprocess
 from shutil import rmtree, copy
 
 homeDir = os.getenv("HOME") + "/"
-bkpDir = homeDir + "bashrc_bkp/"
-bashDir = homeDir + "bashrc/"
-tmpDir = homeDir + "bashrc_tmp/"
+bkpDir = homeDir + ".bashrc_bkp/"
+bashDir = homeDir + ".bashrc_include/"
+tmpDir = homeDir + ".bashrc_tmp/"
 
 repoUrl = "https://github.com/svilborg/dotfiles"
 
 files = [".bashrc", ".bash_logout", ".gitconfig"]
 
 
-def cleanupBash():
+def cleanup_bash():
 
     if os.path.exists(bashDir):
         rmtree(bashDir)
@@ -25,7 +25,7 @@ def cleanupBash():
     pass
 
 
-def cleanupTmp():
+def cleanup_tmp():
 
     if os.path.exists(tmpDir):
         rmtree(tmpDir)
@@ -152,9 +152,9 @@ def revertHomeFiles():
 
 def install():
 
-    cleanupBash()
+    cleanup_bash()
 
-    cleanupTmp()
+    cleanup_tmp()
 
     backup()
 
@@ -168,6 +168,8 @@ def install():
 
     reload_bashrc()
 
+    cleanup_tmp()
+
     print "Installed"
 
     pass
@@ -177,9 +179,9 @@ def revert():
 
     revertHomeFiles()
 
-    cleanupBash()
+    cleanup_bash()
 
-    cleanupTmp()
+    cleanup_tmp()
 
     print "Reverted"
 
@@ -200,19 +202,24 @@ def main(argv):
         print info
         sys.exit(2)
 
-    for opt, arg in opts:
-        if opt == '-h':
+    if len(opts) > 0:
+        for opt, arg in opts:
+            if opt == '-h':
+                print info
+
+                sys.exit()
+            elif opt in ("-i"):
+                install()
+            elif opt in ("-r"):
+                reload_bashrc()
+            elif opt in ("-u"):
+                revert()
+            else:
+                print info
+    else:
             print info
 
-            sys.exit()
-        elif opt in ("-i"):
-            install()
-        elif opt in ("-r"):
-            reload_bashrc()
-        elif opt in ("-u"):
-            revert()
-
-    print 'Done'
+    pass
 
 if __name__ == "__main__":
     main(sys.argv[1:])
