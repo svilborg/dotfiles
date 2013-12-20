@@ -89,7 +89,7 @@ def install_aliases():
     print "Copying aliases"
 
     for file in src_files:
-        fullFile = os.path.join(tmpDir + "/bashrc/", file)
+        fullFile = os.path.join(tmpDir + "bashrc/", file)
 
         if (os.path.isfile(fullFile)):
             copy(fullFile, bashDir + file)
@@ -114,12 +114,14 @@ def install_bin():
     print "Install bin"
 
     # Copy from Destination to Bashrc Dir
-    src_files = os.listdir(tmpDir + "/bin/")
+    src_files = os.listdir(tmpDir + "bin/")
 
     print "Copying bin files"
+    print tmpDir + "/bin/"
 
     for file in src_files:
         fullFile = os.path.join(tmpDir + "/bin/", file)
+        print "Add file - ~./bin/" + file
 
         if (os.path.isfile(fullFile)):
             copy(fullFile, homeDir + "bin/" + file)
