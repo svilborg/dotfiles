@@ -1,0 +1,31 @@
+#!/bin/bash
+# Mounting Android devices - Asus Transformer etc
+#--------------------------------
+
+mount_android() {
+  if [ -d /media/Android ]; then
+    echo "Mount exists, unmounting ..."
+    sudo umount /media/Android
+    sudo rm -r /media/Android
+    echo "Android Unmounted"
+  else
+    echo "Mounting Android..."
+    sudo mkdir /media/Android
+    sudo chmod 775 /media/Android
+    sudo mtpfs -o allow_other /media/Android
+    echo ""
+    echo "Android Mounted at /media/Android"
+    echo ""
+    echo "wait a minute ..."    
+  fi
+}
+
+echo "Mounting Android"
+echo ""
+
+if which mount.mtpfs >/dev/null; then
+  mount_android
+else
+  echo "Package mtpfs is not installed"
+  echo "Run `sudo apt-get install mtpfs` to install it first..."
+fi
