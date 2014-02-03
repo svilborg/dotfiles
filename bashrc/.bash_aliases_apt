@@ -40,8 +40,6 @@ show-kernels () {
             echo -e ${COLOR_BLUE} $i ${COLOR_NC}
         done
     echo ""
-    
-    exit
 }
 
 purge-kernels () {
