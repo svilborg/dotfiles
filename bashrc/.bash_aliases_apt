@@ -3,6 +3,15 @@
 
 #--------------------Apt Get-----------------------------------------------------------
 
+alias apt-cs="apt-cache search"
+alias apt-i="sudo apt-get -y install"
+alias apt-r="sudo apt-get remove"
+alias apt-a="sudo apt-get autoremove"
+alias apt-ug="sudo apt-get upgrade"
+alias apt-u="sudo apt-get update"
+
+alias searchy="apt-cache search"
+
 apt-clean () {
 	sudo apt-get update
 	sudo apt-get upgrade
@@ -12,11 +21,29 @@ apt-clean () {
 	sudo deborphan | xargs sudo apt-get remove --purge
 }
 
-alias apt-cs="apt-cache search"
-alias apt-i="sudo apt-get -y install"
-alias apt-r="sudo apt-get remove"
-alias apt-a="sudo apt-get autoremove"
-alias apt-ug="sudo apt-get upgrade"
-alias apt-u="sudo apt-get update"
+show-kernels () {
+    ALL_KERNELS=`dpkg -l 'linux-*' | sed '/^ii/!d;/'"$(uname -r | sed "s/\(.*\)-\([^0-9]\+\)/\1/")"'/d;s/^[^ ]* [^ ]* \([^ ]*\).*/\1/;/[0-9]/!d' `
 
-alias searchy="apt-cache search"
+    USED_KERNEL=`dpkg -l linux-* |awk '/^ii/{print $2}' |grep -e \`uname -r|cut -f1,2 -d"-"\`|grep -e [0-9]`
+
+    echo ""
+    echo "Installed Kernels: "
+    echo ""
+        for i in $ALL_KERNELS ; do
+            echo -e ${COLOR_GRAY} $i ${COLOR_NC}
+        done
+
+    echo ""
+    echo "Current Kernel: "
+    echo ""
+        for i in $USED_KERNEL; do
+            echo -e ${COLOR_BLUE} $i ${COLOR_NC}
+        done
+    echo ""
+    
+    exit
+}
+
+purge-kernels () {
+    sudo apt-get remove --purge $(dpkg -l 'linux-*' | sed '/^ii/!d;/'"$(uname -r | sed "s/\(.*\)-\([^0-9]\+\)/\1/")"'/d;s/^[^ ]* [^ ]* \([^ ]*\).*/\1/;/[0-9]/!d')
+}
