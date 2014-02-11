@@ -21,6 +21,44 @@ apt-clean () {
 	sudo deborphan | xargs sudo apt-get remove --purge
 }
 
+function apt-list-repos () {
+    echo ""
+    args=("$@")
+
+    case ${args[0]} in
+        all)
+            echo "APT All Repos: "
+            echo ""
+
+            for APT in `find /etc/apt/ -name \*.list`; do
+                grep -o "^deb.*" $APT | while read ENTRY ; do
+                    echo $ENTRY
+                done
+            done
+        ;;
+        src)
+            echo "APT Src Repos: "
+            echo ""
+
+            for APT in `find /etc/apt/ -name \*.list`; do
+                grep -o "^deb-src.*" $APT | while read ENTRY ; do
+                    echo $ENTRY
+                done
+            done
+        ;;
+        *)
+            echo "APT Non-Src Repos: "
+            echo ""
+
+            for APT in `find /etc/apt/ -name \*.list`; do
+                grep -o "^deb .*" $APT | while read ENTRY ; do
+                    echo $ENTRY
+                done
+            done
+        ;;
+    esac
+}
+
 show-kernels () {
     ALL_KERNELS=`dpkg -l 'linux-*' | sed '/^ii/!d;/'"$(uname -r | sed "s/\(.*\)-\([^0-9]\+\)/\1/")"'/d;s/^[^ ]* [^ ]* \([^ ]*\).*/\1/;/[0-9]/!d' `
 
@@ -29,16 +67,16 @@ show-kernels () {
     echo ""
     echo "Installed Kernels: "
     echo ""
-        for i in $ALL_KERNELS ; do
-            echo -e ${COLOR_GRAY} $i ${COLOR_NC}
-        done
+    for i in $ALL_KERNELS ; do
+        echo -e ${COLOR_GRAY} $i ${COLOR_NC}
+    done
 
     echo ""
     echo "Current Kernel: "
     echo ""
-        for i in $USED_KERNEL; do
-            echo -e ${COLOR_BLUE} $i ${COLOR_NC}
-        done
+    for i in $USED_KERNEL; do
+        echo -e ${COLOR_BLUE} $i ${COLOR_NC}
+    done
     echo ""
 }
 
