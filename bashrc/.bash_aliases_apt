@@ -11,6 +11,7 @@ alias apt-ug="sudo apt-get upgrade"
 alias apt-u="sudo apt-get update"
 
 alias searchy="apt-cache search"
+alias birth="sudo aptitude install"
 
 apt-clean () {
 	sudo apt-get update

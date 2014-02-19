@@ -25,21 +25,6 @@ export COLOR_LIGHT_GRAY='\033[0;37m'
 alias bashrc='. ~/.bashrc; echo ".bashrc reloaded"'
 alias colorslist="set | egrep 'COLOR_\w*'" # lists all the colors
 
-#--------------------Apt Get-----------------------------------------------------------
-alias apt-i='sudo apt-get install'
-
-apt-clean () {
-	sudo apt-get update
-	sudo apt-get upgrade
-	sudo apt-get clean
-	sudo apt-get autoclean
-	sudo apt-get autoremove
-	sudo deborphan | xargs sudo apt-get remove --purge
-}
-
-alias birth="sudo aptitude install"
-alias searchy="apt-cache search"
-
 # ---------------- Other Commands ------------------------------------------------------
 # Shows most used commands, from: http://lifehacker.com/software/how-to/turbocharge-your-terminal-274317.php
 alias profileme="history | awk '{print \$5}' | awk 'BEGIN{FS=\"|\"}{print \$1}' | sort | uniq -c | sort -n | tail -n 20 | sort -nr"
