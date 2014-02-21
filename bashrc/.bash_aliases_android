@@ -1,0 +1,8 @@
+# ~/bashrc/.bash_android: Droid Bash Aliases
+
+# Defaults
+ANDROID_HOME=/work/opt/android-sdk/
+
+export ANDROID_HOME=$ANDROID_HOME
+
+export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools

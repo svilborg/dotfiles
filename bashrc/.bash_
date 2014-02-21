@@ -25,6 +25,7 @@ include_d .bash_aliases_apt
 include_d .bash_aliases_fs
 include_d .bash_aliases_mysql
 include_d .bash_aliases_svn
+include_d .bash_aliases_android
 
 include_d .bash_completion_pip
 include_d .bash_completion_django
