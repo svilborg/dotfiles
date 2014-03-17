@@ -78,7 +78,7 @@ svinfo () {
 }
 
 # Do "svn update" in each subdirectory.
-function svnmulti () {
+function svnmulti {
     SVN_CMD=info
 
     if [ $# -gt 0 ]
