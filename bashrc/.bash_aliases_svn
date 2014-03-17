@@ -3,69 +3,76 @@
 # Colorize SVN
 function svncolor {
 
-	if [ "x$1" = "xci" ] || [ "x$1" = "xcommit" ] || [ "x$1" = "xadd" ]
-		then
-		command svn "$@";
-		return;
-	fi
+    if [ "x$1" = "xci" ] || [ "x$1" = "xcommit" ] || [ "x$1" = "xadd" ]
+        then
+        command svn "$@";
+        return;
+    fi
 
-
-	command svn "$@" | awk '
-	BEGIN {
-		cpt_c=0;
-	}
-	{
-		if ($1=="C") {
-			cpt_c=cpt_c+1;
-			print "\033[31m" $0 "\033[00m"; # Conflicts are displayed in red
-		}
-	else if ($1=="M") {
-		print "\033[31m" $0 "\033[00m"; # Modified in red
-	}
+    command svn "$@" | awk '
+    BEGIN {
+        cpt_c=0;
+    }
+    {
+if ($1=="C") {
+    cpt_c=cpt_c+1;
+    print "\033[31m" $0 "\033[00m"; # Conflicts are displayed in red
+}
+else if ($1=="M") {
+    print "\033[31m" $0 "\033[00m"; # Modified in red
+}
 else if ($1=="A") {
-	print "\033[32m" $0 "\033[00m"; # Add in green
+    print "\033[32m" $0 "\033[00m"; # Add in green
 }
 else if ($1=="?") {
-	print "\033[36m" $0 "\033[00m"; # New in cyan
+    print "\033[36m" $0 "\033[00m"; # New in cyan
 }
 else if ($1=="D") {
-	print "\033[31m" $0 "\033[00m"; # Delete in red
+    print "\033[31m" $0 "\033[00m"; # Delete in red
 }
 else if ($1=="U") {
-	print "\033[35m" $0 "\033[00m"; # Updated in light magenta
+    print "\033[35m" $0 "\033[00m"; # Updated in light magenta
 }
 else if ($1=="X") {
-	print "\033[33m" $0 "\033[00m"; # No changes in yellow.
+    print "\033[33m" $0 "\033[00m"; # No changes in yellow.
 }
 else if ($1=="At" || $1 == "External") {
-	print "\033[33m" $0 "\033[00m"; # Revision numbers in brown.
+    print "\033[33m" $0 "\033[00m"; # Revision numbers in brown.
+}
+else if ($1=="Repository" || $1 == "Last" || $1 == "Path" || $1 == "URL:" || $1 == "Revision:" || $1 == "Node" || $1 == "Schedule:" || $1 == "Path:") {
+    print "\033[0;37m" $0 "\033[00m"; # svn info data
+}
+else if ($1=="------------------------------------------------------------------------") {
+    print "\033[33m" $0 "\033[00m"; # Delimiter in svn log
 }
 else {
-	print $0; # No color, just print the line
+    # print ">>"
+    # print $1;
+    # print "---";
+    print $0; # No color, just print the line
 }
 }
 END {
-	print cpt_c, " conflicts are found.";
-}';
+    print cpt_c, " conflicts are found.";}';
 }
 
 alias sv='svn' # SVN
 alias svimport='sv import'  # SVN Import
-alias svcheckout='sv checkout' # SVN Checkout
-alias svstatus='sv status'  # SVN Status
-alias svadd='sv add' # SVN Add
-alias svcommit='sv commit' # SVN Commit
-alias svupdate='sv update' # SVN Update
-alias svstatusremote='sv status --show-updates' # Show status here and on the server
-alias svaddall='sv status | grep "^\?" | awk "{print \$2}" | xargs svn add'
-alias svdelete='sv delete'
-alias svhelp='sv help'
-alias svblame='sv blame'
+alias svcheckout='svncolor checkout' # SVN Checkout
+alias svstatus='svncolor status'  # SVN Status
+alias svadd='svncolor add' # SVN Add
+alias svcommit='svncolor commit' # SVN Commit
+alias svupdate='svncolor update' # SVN Update
+alias svstatusremote='svncolor status --show-updates' # Show status here and on the server
+alias svaddall='svncolor status | grep "^\?" | awk "{print \$2}" | xargs svn add'
+alias svdelete='svncolor delete'
+alias svhelp='svncolor help'
+alias svblame='svncolor blame'
 alias svexcludeswpfiles='sv propset svn:ignore "*.swp" .'
-alias svdeleteall='sv status | grep "^\!" | awk "{print \$2}" | xargs svn delete'
-alias svlastlog='svn log -v -l 10 | less'
+alias svdeleteall='svncolor status | grep "^\!" | awk "{print \$2}" | xargs svn delete'
+alias svlastlog='svncolor log -v -l 10 | less'
 
 svinfo () {
-	sv info $@
-	sv log $@
+	svncolor info $@
+	svncolor log $@
 }
