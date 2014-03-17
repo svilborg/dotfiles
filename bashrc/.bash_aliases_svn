@@ -76,3 +76,19 @@ svinfo () {
 	svncolor info $@
 	svncolor log $@
 }
+
+# Do "svn update" in each subdirectory.
+function svnmulti {
+    SVN_CMD=info
+
+    if [ $# -gt 0 ]
+    then
+      SVN_CMD="$@"
+    fi
+
+    for DIR in */
+    do
+      echo "======== \"$DIR\""
+      svn $SVN_CMD $@"$DIR"
+    done
+}
