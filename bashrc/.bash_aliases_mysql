@@ -1,4 +1,4 @@
-# .bash_aliases: MySQL Commands Bash Aliases
+# ~/bashrc/.bash_aliases_mysql: MySQL Commands Bash Aliases
 
 export MYSQL_DEFAULT_DB=mysql
 

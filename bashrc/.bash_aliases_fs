@@ -1,4 +1,4 @@
-# ~/bashrc/.bash_aliases: File System Bash Aliases
+# ~/bashrc/.bash_aliases_fs: File System Bash Aliases
 
 # enable color support of ls and also add handy aliases
 alias ls='ls --color=auto'

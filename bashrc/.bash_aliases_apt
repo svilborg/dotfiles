@@ -1,6 +1,5 @@
 # ~/bashrc/.bash_apt: Apt Aliases
 
-
 #--------------------Apt Get-----------------------------------------------------------
 
 alias apt-cs="apt-cache search"

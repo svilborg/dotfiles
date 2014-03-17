@@ -1,4 +1,4 @@
-# ~/bashrc/.bash_android: Droid Bash Aliases
+# ~/bashrc/.bash_aliases_android: Droid Bash Aliases
 
 # Defaults
 ANDROID_HOME=/work/opt/android-sdk/

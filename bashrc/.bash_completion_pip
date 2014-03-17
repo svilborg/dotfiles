@@ -1,4 +1,4 @@
-# .bash_completition_pip: pip
+# ~/bashrc/.bash_aliases_completition_pip: pip
 
 _pip() {
 
