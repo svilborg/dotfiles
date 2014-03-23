@@ -77,7 +77,7 @@ svinfo () {
 	svncolor log $@
 }
 
-# Do "svn update" in each subdirectory.
+# Do "svn command" in each subdirectory.
 svnmulti () {
     SVN_CMD=info
 
