@@ -80,10 +80,14 @@ fi
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
-# ~/.bash_aliases, instead of adding them here directly.
+# ~/.bash_aliases, instead of adding them here directly. 
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
 if [ -f ~/.bashrc_include/.bash_ ]; then
     . ~/.bashrc_include/.bash_
+fi
+
+if [ -f ~/.bash_profile ]; then
+    . ~/.bash_profile
 fi
 
 export PATH=$PATH:~/bin
