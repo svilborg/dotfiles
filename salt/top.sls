@@ -1,4 +1,5 @@
 base:
   '*':
-    - webserver
+    - apache2
     - python
+    - php5
