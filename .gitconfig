@@ -30,7 +30,8 @@
     ls = ls-files
     dt = difftool
     mt = mergetool
-
+    lg = git log --oneline --decorate --graph --all -50
+    
     # Commit all changes
     ca = commit -a    
     # Commit all changes
