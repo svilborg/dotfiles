@@ -74,11 +74,6 @@ alias svlastlog='svncolor log -v -l 10 | less'
 alias svinfo='svncolor info'
 alias svallupdate='svn up `ls -d`'
 
-svinfo () {
-	svncolor info $@
-	svncolor log $@
-}
-
 # Do "svn command" in each subdirectory.
 svnmulti () {
     SVN_CMD=info
