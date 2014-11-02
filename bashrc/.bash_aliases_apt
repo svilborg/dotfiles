@@ -18,7 +18,32 @@ apt-clean () {
 	sudo apt-get clean
 	sudo apt-get autoclean
 	sudo apt-get autoremove
-	sudo deborphan | xargs sudo apt-get remove --purge
+}
+
+apt-fix-broken () {
+    sudo apt-get install --fix-broken
+}
+
+remove-orphaned () {
+    sudo deborphan | xargs sudo apt-get -y remove --purge
+}
+
+remove-orphaned-config () {
+    sudo deborphan -n --find-config | xargs sudo apt-get -y purge
+}
+
+apt-fix-all () {
+    echo "Apt Update/Clean: "
+    apt-clean
+
+    echo "Apt Fix Broken: "
+    apt-fix-broken
+
+    echo "Remove orphaned: "
+    remove-orphaned
+
+    echo "Remove orphaned configs: "
+    remove-orphaned-config
 }
 
 function apt-list-repos () {
