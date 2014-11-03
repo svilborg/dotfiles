@@ -36,6 +36,9 @@ apt-fix-all () {
     echo "Apt Update/Clean: "
     apt-clean
 
+    echo "Apt Dist Upgrade: "
+    sudo apt-get dist-upgrade
+
     echo "Apt Fix Broken: "
     apt-fix-broken
 
