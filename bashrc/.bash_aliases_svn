@@ -72,7 +72,7 @@ alias svexcludeswpfiles='sv propset svn:ignore "*.swp" .'
 alias svdeleteall='svncolor status | grep "^\!" | awk "{print \$2}" | xargs svn delete'
 alias svlastlog='svncolor log -v -l 10 | less'
 alias svinfo='svncolor info'
-alias svallupdate='svn up `ls -d ./*`'
+alias svallupdate='svncolor update `ls -d -- */`'
 
 # Do "svn command" in each subdirectory.
 svnmulti () {
