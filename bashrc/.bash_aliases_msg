@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+
+indent() {
+    printf '%*s' $@
+}
+
+echoe() {
+    echo -e $@
+}
+
+echo_head()
+{
+    indent 1 && echoe "$@ \n"
+}
+
+echo_txt ()
+{
+    indent 2 && echoe "$@"
+}
+
+echo_li ()
+{
+    indent 2 && echoe " - $@"
+}
+
+msg_error()
+{
+    local msg=${1:-An Error Occured.}
+
+    msg=${msg}
+
+    echoe ""
+
+    indent 1 && \
+    echoe "${STYLE_BOLD}${COLOR_RED}ERROR: ${COLOR_WHITE}${msg}${NC}" >&2
+
+    # echoe ""
+}
+
+msg_warning()
+{
+    local msg=${1:-A Warning ...}
+
+    msg=${msg}
+
+    echoe ""
+    indent 1 && \
+    echoe "${STYLE_BOLD}${COLOR_YELLOW}WARNING: ${COLOR_WHITE}${msg}${NC}" >&2
+    echoe ""
+}
+
+msg_info()
+{
+    local msg=${1:-Info}
+
+    msg=${msg}
+
+    echoe ""
+    indent 1 && \
+    echoe "${STYLE_BOLD}${COLOR_BLUE}  ✔ ${COLOR_WHITE}${msg}${NC}" >&2
+}
+
+msg_die()
+{
+    # Usage: die [MESSAGE] [ERROR_CODE]
+    msg_error "$1"; msg_exit ${2:-1}
+}

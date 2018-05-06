@@ -1,31 +1,13 @@
+#!/usr/bin/env bash
 # ~/bashrc/.bash_: Bash includes
 
 DOTFILE_DEBUG=false
 
-function output() {
-	if $DOTFILE_DEBUG; then
-		echo $1
-	fi
+include_all() {
+    for fx in `find ~/.bashrc_include/ -name *bash_aliases*`; do
+        . $fx
+    done
 }
 
-function include_d {
-
-	dir=~/.bashrc_include/$1
-
-	if [ -f $dir ]; then
-		. $dir
-		output "OK including . $dir"
-	else 
-		output "Error including . $dir"
-	fi
-}
-
-include_d .bash_aliases
-include_d .bash_aliases_apt
-include_d .bash_aliases_fs
-include_d .bash_aliases_mysql
-include_d .bash_aliases_svn
-include_d .bash_aliases_android
-
-include_d .bash_completion_pip
-include_d .bash_completion_django
+include_all
+unset -f include_all

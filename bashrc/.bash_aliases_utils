@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+# ~/includes/.bash_aliases_utils
+# ==================================
+
+str-lower ()
+{
+    tr '[:upper:]' '[:lower:]'
+}
+
+str-upper () {
+    tr '[:lower:]' '[:upper:]'
+}
+
+str-title ()
+{
+    str-lower | sed 's/\<./\u&/g' |
+    sed "s/'[[:upper:]]/\L&\l/g"
+}
+
+str-camel ()
+{
+    sed 's/_/ /g' |
+    sed 's/\<\(.\)/\U\1/g' |
+    sed 's/ //g'
+}
+
+str-first()
+{
+    local value
+    for value in "$@"; do
+        if [[ ${value} ]]; then
+            echo "$value"
+            return 0
+        fi
+    done
+    return 1
+}
+
+str-nl-spaces() {
+    IFS= 
+    while read -r
+    do
+        echo "$REPLY" \
+            | tr '\n' ' '
+    done
+}
+
+str-delete-spaces() {
+    IFS= read -r
+    echo "$REPLY" \
+        | sed 's/ //g'
+}
+
+# ==============================
+
+default_delimiter() {
+    echo '.'
+}
+
+date_str() {
+    local delimiter=${1:-$(default_delimiter)}
+
+    date +%Y${delimiter}%m${delimiter}%d
+}
+
+time_str() {
+    local delimiter=${1:-$(default_delimiter)}
+
+    date +%H${delimiter}%M${delimiter}%S
+}
+
+datetime_str() {
+    local delimiter=${1:-$(default_delimiter)}
+    local hour_delimiter=${2:-'-'}
+
+    echo $(date_str ${delimiter})${hour_delimiter}$(time_str ${delimiter})
+}
+
+is_installed() {
+    if ! [ -x "$(command -v $@)" ]; then
+        echo "Error: $@ is not installed." >&2
+    fi
+}
+

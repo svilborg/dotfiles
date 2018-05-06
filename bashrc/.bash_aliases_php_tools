@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+
+
+##### Laravel 
+###############################3
+
+# composer require barryvdh/laravel-ide-helper
+# Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
+#
+# "scripts":{
+#     "post-update-cmd": [
+#         "Illuminate\\Foundation\\ComposerScripts::postUpdate",
+#         "php artisan ide-helper:generate",
+#         "php artisan ide-helper:meta"
+#     ]
+# },
+
+
+###### Artisan
+##################################
+
+# composer require balping/artisan-bash-completion
+alias artisan="php artisan"
+
+_artisan()
+{
+    COMPREPLY=(`artisan list:forBash $COMP_LINE`)
+    return 0
+}
+complete -F _artisan artisan
+
+###### Composer
+################################
+
+export PATH="$PATH:$HOME/.composer/vendor/bin"
+
+alias c='composer'
+
+_composer() {
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    commands=$(composer  list --format=xml  | grep -E -o "(<command>([^<]*))" \
+    | tr -d ' ' | sed "s/<command>//g")
+
+    if [ $COMP_CWORD == 1 ] ; then
+        COMPREPLY=( $(compgen -W "${commands}" -- ${cur}) )
+        return 0
+    fi
+}
+
+complete -F _composer composer
+complete -F _composer c
+
+###### Symfony Console
+################################
+
+alias sym='./bin/console'
+
+_sym() {
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    commands=$(./bin/console  list --format=xml  | grep -E -o "(<command>([^<]*))" \
+    | tr -d ' ' | sed "s/<command>//g") | sed "s/:/\\\:/g"
+
+    if [ $COMP_CWORD == 1 ] ; then
+        COMPREPLY=( $(compgen -W "${commands}" -- ${cur}) )
+        return 0
+    fi
+}
+
+complete -F _sym ./bin/console
+complete -F _sym sym

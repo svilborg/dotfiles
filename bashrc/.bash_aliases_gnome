@@ -1,0 +1,34 @@
+#! /bin/bash
+
+gs-theme() {
+    args=("$@")
+
+    if [ -z "$@" ]; then
+        msg_warning "No theme selected [Use : gsettings-theme <Theme>] "
+    else
+        msg_info "Theme $@ set"
+
+        gsettings set org.gnome.metacity theme "$@" &&
+        gsettings set org.gnome.desktop.interface gtk-theme "$@" &&
+        gsettings set org.gnome.desktop.wm.preferences theme "$@"
+    fi
+}
+
+gs-theme-list() {
+    msg_info "metacity"
+    gsettings get org.gnome.metacity theme
+
+    msg_info "gtk-theme"
+    gsettings get org.gnome.desktop.interface gtk-theme
+
+    msg_info "desktop theme"
+    gsettings get org.gnome.desktop.wm.preferences theme
+}
+
+gs-tp-on() {
+    gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
+}
+
+gs-tp-off() {
+    gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click false
+}

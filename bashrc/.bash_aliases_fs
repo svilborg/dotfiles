@@ -12,6 +12,7 @@ alias egrep='egrep --color=auto'
 
 alias df="df -h"
 
+# Cleanups
 alias rmsvn='find . -name ".svn" -exec rm -rf {} \;' # Delete .svn folders
 alias dsstore="find . -name '*.DS_Store' -type f -ls -delete" # Recursively delete `.DS_Store` files
 
@@ -31,27 +32,43 @@ alias tree='tree -Csu'
 #great for finding the current "real" size of all folders/files
 alias ducks="du -k | sort -n | tail -n 200 | perl -ne 'if ( /^(\d+)\s+(.*\$)/){\$l=log(\$1+.1);\$m=int(\$l/log(1024)); printf (\"%6.1f\t%s\t%25s %s\n\",(\$1/(2**(10*\$m))),((\"K\",\"M\",\"G\",\"T\",\"P\")[\$m]),\"*\"x (1.5*\$l),\$2);}' "
 
+# ---------------- Navigation ------------------------------------------------------------
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
+alias ~="cd ~" # `cd` is probably faster to type though
+alias -- -="cd -"
+alias home="cd ~"
+alias e='exit'
+alias clr="clear"
+alias cla="clear && ls -l"
+alias cll="clear && ls -la"
+alias cls="clear && ls"
+
 # ---------------- History ------------------------------------------------------------
 alias h='history | tail -n 30'
+# alias h="history"
+alias j="jobs"
 
 hf(){ grep "$@" ~/.bash_history; }
 
 #-------------------- Search ----------------------------------------------------------
 
 g() {
-	grep -Ri "$1" *
+    grep -Ri "$1" *
 }
 
 f() {
-	find . -iname "*$**"
+    find . -iname "*$**"
 }
 
 alias paux="ps -A|grep -i"
 
 # Extract Archive
-function extract()
+extract()
 {
-     if [ -f $1 ] ; then
+    if [ -f $1 ] ; then
          case $1 in
              *.tar.bz2) tar xvjf $1 ;;
              *.tar.gz) tar xvzf $1 ;;
@@ -69,4 +86,23 @@ function extract()
      else
          echo "'$1' is not a valid file"
      fi
+}
+
+
+catf () {
+    local f="$@"
+
+    cat $@ | \
+        sed  's/^\([^=;#]*\)=\(.*\)$/'$(tput setaf 6)'\1'$(tput sgr0)'='$(tput setaf 4)'\2'$(tput sgr0)'/g' | \
+        sed  's/^[#|;].*$/'$(tput setaf 000)$(tput bold)'&'$(tput sgr0)'/g'
+}
+
+catff () {
+    local f="$@"
+
+    cat $@ | \
+        sed  -Ee '/^[#|;].*$/d' | \
+        sed '/^$/d' | \
+        sed  's/^\([^=;#]*\)=\(.*\)$/'$(tput setaf 99)'\1'$(tput sgr0)'='$(tput setaf 4)'\2'$(tput sgr0)'/g' 
+
 }

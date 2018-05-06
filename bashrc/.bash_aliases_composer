@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+export PATH="$PATH:$HOME/.composer/vendor/bin"
+
+alias c='composer'
+
+_composer() {
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    commands=$(composer  list --format=xml  | grep -E -o "(<command>([^<]*))" | tr -d ' ' | sed "s/<command>//g")
+
+    if [ $COMP_CWORD == 1 ] ; then
+        COMPREPLY=( $(compgen -W "${commands}" -- ${cur}) )
+        return 0
+    fi
+}
+
+complete -F _composer composer
+complete -F _composer c

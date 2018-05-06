@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+
+# ================ TV ===============
+
+stv() {
+    if [[ ! $@ ]]; then
+        echo "Missing param : stv [host] [key]"
+        return
+    fi
+
+    args=("$@")
+
+    samsungctl --host "${args[0]}" \
+        --method websocket \
+        --name SamsungCtl \
+        --id "LXPC${UID}" \
+        --description "Samsung Cli Control" \
+        ${args[1]}
+}
+
+stv-swtich-src () {
+    if [[ ! $@ ]]; then
+        echo "Missing param : stv [host] [key]"
+        return
+    fi
+
+    stv "$@" KEY_SOURCE && \
+    sleep 1 && \
+    stv "$@" KEY_RIGHT && \
+    sleep 1 && \
+    stv "$@" KEY_ENTER
+}
+
+
+# ==============================
+
+pulseaudio-monitor() {
+    echo $(pactl list | grep -A2 '^Source #'  | grep 'Name: .*\.monitor$' | awk '{print $NF}' | tail -n1)
+}
+
+desktop-capture() {
+
+    RESOLUTION="1920x1080"
+    QUAL="ultrafast"
+    TUNE="animation"
+    OUTPUT=/tmp/desktop-capture.mkv
+    OFFSET="0,0"
+    FPS="30"
+
+    # parec -d $(pulseaudio-monitor) | \
+    avconv \
+            -f alsa -i hw:0 \
+            -f x11grab -r "$FPS" \
+            -s "$RESOLUTION" -i :0.0+"$OFFSET" \
+            -vcodec libx264 -crf 30 \
+            -preset "$QUAL" -tune "$TUNE" \
+            -acodec libmp3lame -ar 44100 \
+            -threads 4 \
+            "$OUTPUT"
+
+}

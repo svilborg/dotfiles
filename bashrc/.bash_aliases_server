@@ -1,0 +1,190 @@
+#!/usr/bin/env bash
+
+#----------------------------------------------------------------------
+
+_services=('mysql' 'apache2' 'nginx' 'postgresql' 'docker' 'php7.2-fpm')
+
+service-switch() {
+    args=("$@")
+
+    if [[ ! ${args[0]} ]] && [[ ! ${args[1]} ]]; then
+        echo "Missing param : service-switch [service] [status]"
+        return
+    fi
+
+    if [[ ! $(sudo service --status-all | grep "${args[0]}") ]]; then
+        echo "No service found ${args[0]}"
+        return
+    fi
+
+    sudo service $@
+
+    echo "Done : " $@
+}
+
+service-stop-all () {
+    for i in ${_services[*]}; do
+        service-switch $i stop
+    done
+}
+
+service-start-all () {
+    for i in ${_services[*]}; do
+        service-switch $i start
+    done
+}
+
+_cpu_toggle ()
+{
+    args=("$@")
+
+    if [[ ${args[1]} != "0" ]] && [[ ${args[1]} != "1" ]]; then
+        echo -e ${COLOR_RED} "Invalid option" ${COLOR_NC}
+        return
+    fi
+
+    echo ${args[1]} | \
+    sudo tee /sys/devices/system/cpu/cpu${args[0]}/online > /dev/null
+    echo "State of CPU "${args[0]}" set to "${args[1]}
+}
+
+_cpu_toggle_all ()
+{
+    PROCS=`grep "processor" /proc/cpuinfo | awk '{print $3}'`
+
+    NUM_CPUS=`lscpu | grep "CPU(s):" | awk '{print $2; exit}'`
+
+    for (( i = 0; i < $NUM_CPUS; i++ )); do
+        if [ ! $i = "0" ]; then
+            _cpu_toggle $i $@
+        fi
+    done
+}
+
+cpu-off ()
+{
+    _cpu_toggle_all 0
+    cpu-proc-list
+}
+
+cpu-on ()
+{
+    _cpu_toggle_all 1
+    cpu-proc-list
+}
+
+cpu-proc-list ()
+{
+    echo  -e "\nProcessors \n"
+    grep "processor" /proc/cpuinfo
+}
+
+
+sys-backup () {
+
+    if [[ ! $@ ]]; then
+        echo "Missing param : sys-backup [path]"
+        return
+    fi
+
+    _dir=$@
+
+    msg_info "Starting System Backup"
+
+    msg_info "Backup Folder :"
+    echo "${_dir}"
+
+    if [[ ! -d "${_dir}" ]]; then
+        mkdir ${_dir}
+    fi
+
+    msg_info "PPA "
+    sudo aptik --backup-ppa --backup-dir ${_dir}
+
+    msg_info "Downloaded Packages"
+    sudo aptik --backup-cache --backup-dir ${_dir}
+
+    msg_info "Packages "
+    sudo aptik --backup-packages --backup-dir ${_dir}
+
+    msg_info "Themes "
+    sudo aptik --backup-themes --backup-dir ${_dir}
+
+    msg_info "Data "
+    sudo duplicity \
+        --verbosity i \
+        --include /opt --include /home \
+        --exclude '**' / file://${_dir}
+
+}
+
+sys-info () {
+
+    if [[ ! $@ ]]; then
+        echo "Missing param : ${FUNCNAME[0]} [path]"
+        return
+    fi
+
+    _dir=$@
+
+    msg_info "Backup Folder :"
+    echo "${_dir}"
+
+    msg_info "PPA"
+    du -sb --block-size=M "${_dir}/ppa.list"
+
+    # msg_info "Cache"
+
+    msg_info "Packages"
+    du -sb --block-size=M "${_dir}/packages.list"
+
+    msg_info "${COLOR_WHITE}Themes${COLOR_NC}"
+    du -sb --block-size=M "${_dir}/themes"
+
+    msg_info "Data"
+    sudo duplicity \
+        collection-status \
+        file://${_dir}
+}
+
+sys-restore() {
+
+    if [[ ! $@ ]]; then
+        echo "Missing param : ${FUNCNAME[0]} [path]"
+        return
+    fi
+
+    _dir=$@
+
+    msg_info "Restoring System Backup"
+    msg_info "Backup Folder :"
+    echo "${_dir}"
+
+    msg_info "PPA "
+    sudo aptik --restore-ppa --backup-dir ${_dir}
+
+    msg_info "Cache  "
+    sudo aptik --restore-cache --backup-dir ${_dir}
+
+    msg_info "Packages "
+    sudo aptik --restore-packages --backup-dir ${_dir}
+
+    msg_info "Themes "
+    sudo aptik --restore-themes --backup-dir ${_dir}
+
+    # msg_info "= Configs "
+    # sudo aptik --restore-configs --backup-dir ${_dir}
+
+    msg_info "\n  Data "
+    sudo duplicity --verbosity i --dry-run file://${_dir}/opt/ /opt
+    sudo duplicity --verbosity i --dry-run file://${_dir}/home/ /home
+}
+
+
+bb-cc() {
+    bleachbit -c libreoffice.* java.* system.trash \
+        chromium.cache google_chrome.cache google_chrome.cookies \
+        firefox.cache firefox.download_history firefox.cookies \
+        gnome.* opera.* epiphany.* \
+        thumbnails.cache kde.* flash.*
+}

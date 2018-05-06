@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+git-ignore() {
+    wget --no-check-certificate https://www.gitignore.io/api/"$@" -O .gitignore
+}
+
+git-repo() {
+    !git init && git add . && git commit -m \"Initial commit\"
+}
+
+git-import() {
+    args=("$@")
+
+    if [[ ! $@ ]]; then
+        echo "Missing param : git-import [repository]"
+        return
+    fi
+
+    name=`echo "$@" | grep -E -o "([^/])*\.git" | sed -n "s/.git//p"`
+
+
+    if [[ ! ${name} ]]; then
+        echo "Error : cant extract repository name"
+        return
+    fi
+
+    if [[ ! -d "${name}" ]]; then
+        mkdir "${name}"
+    fi
+
+    echo -e "\nGit Import into $name\n"
+
+    git clone "$@" "./$name"
+
+}
+
+git-include() {
+    git config --global include.path "~/.bashrc_include/git_aliases"
+}

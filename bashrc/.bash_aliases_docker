@@ -1,0 +1,179 @@
+#!/usr/bin/env bash
+
+# prefix docker ps with ips
+docker-ips() {
+    docker ps | while read line; do
+        if `echo ${line} | grep -q 'CONTAINER ID'`; then
+            echo -e "IP ADDRESS\t$line"
+        else
+            CID=$(echo ${line} | awk '{print $1}');
+            IP=$(docker inspect -f "{{ .NetworkSettings.IPAddress }}" ${CID});
+            printf "${IP}\t${line}\n"
+        fi
+    done;
+}
+
+docker-clean-exited() {
+    docker ps -a | while read line; do
+        echo ${line} | grep '^CONTAINER ID' && continue;
+        CID=$(echo ${line} | awk '{print $1}');
+        docker inspect -f "{{ .State.Running }}" ${CID} | grep -q 'false' && docker rm -f ${CID};
+
+    done;
+}
+
+# add variable DOCKER_ID with UID of most  container
+alias docker-id='export DOCKER_ID=`docker ps -ql` && echo $DOCKER_ID'
+
+# remove all containers
+alias docker-rmall='docker stop $(docker ps -qa) && docker rm $(docker ps -qa) && docker rmi $(docker images -q)'
+
+# # kill all containers
+alias docker-killall='docker kill $(docker ps -q)'
+
+# # inspect last container created
+# alias docker-inspect="docker inspect $(docker ps -ql) | less"
+
+# # get ip of container
+alias docker-ip='docker inspect -f "{{ .NetworkSettings.IPAddress }}"'
+
+# # enter last container
+# alias docker-ns='nsenter --target $(docker inspect --format {{.State.Pid}} $(docker ps -ql)) --mount --uts --ipc --net --pid'
+
+# # docker run -it
+alias docker-run='docker run -it '
+
+# following based on https://github.com/rcmorano/docker-baids/blob/master/00-docker-baids
+
+docker-container-grep() {
+    PATTERN=$@
+    docker ps -a | grep ${PATTERN} | grep -v ^CONTAINER
+}
+
+docker-container-grep-running() {
+    PATTERN=$@
+    docker ps | grep ${PATTERN} | grep -v ^CONTAINER
+}
+
+# docker-container-kill-pattern() {
+#     PATTERN=$@
+#     docker-container-grep-running $PATTERN | awk '{print $1}' | xargs -rI % bash -c 'echo $(docker kill %; echo "killed!");'
+# }
+
+docker-container-most-recent() {
+    docker ps | grep -v ^CONTAINER | head -n1 | awk '{print $1}'
+}
+
+# docker-container-most-recent-killed() {
+#     docker ps -a | grep Exited | head -n1 | awk '{print $1}'
+# }
+
+# docker-container-diff-most-recent() {
+#     LAST_CONTAINER=$(docker-container-most-recent)
+
+#     if [ ! -z "$LAST_CONTAINER" ]
+#     then
+#         docker diff $LAST_CONTAINER
+#     else
+#         echo "There are no running containers!"
+#     fi
+# }
+
+docker-container-get-ip() {
+    CONTAINER_ID=$1
+    if [ -z "$CONTAINER_ID" ]
+    then
+        CONTAINER_ID=$(docker-container-most-recent)
+    fi
+    if [ ! -z "$CONTAINER_ID" ]
+    then
+        docker inspect --format '{{ .NetworkSettings.IPAddress }}' ${CONTAINER_ID}
+    else
+        echo "There are no running containers!"
+    fi
+}
+
+# docker-container-inspect-most-recent() {
+#     LAST_CONTAINER=$(docker-container-most-recent)
+#     if [ ! -z "$LAST_CONTAINER" ]
+#     then
+#         docker inspect $LAST_CONTAINER
+#     else
+#         echo "There are no running containers!"
+#     fi
+# }
+
+# docker-container-get-root() {
+#     CONTAINER_ID=$1
+#     if [ -z "$CONTAINER_ID" ]
+#     then
+#         CONTAINER_ID=$(docker-container-most-recent)
+#     fi
+#     if [ ! -z "$CONTAINER_ID" ]
+#     then
+#         docker inspect --format '{{ .HostsPath }}' $CONTAINER_ID
+#     else
+#         echo "There are no running containers!"
+#     fi
+# }
+
+# docker-container-map-port() {
+#     CONTAINER_ID=$1
+#     SRC_PORT=$2
+#     DST_PORT=$3
+#     CONTAINER_IP=$(docker-container-get-ip $CONTAINER_ID)
+#     iptables -t nat -A  DOCKER -p tcp --dport $SRC_PORT -j DNAT --to-destination $CONTAINER_IP:$DST_PORT
+# }
+
+docker-container-remove-all() {
+    docker ps -a | grep -v ^CONTAINER | awk '{print $1}' | xargs -rI % bash -c 'echo $(docker kill %; echo "killed!"); echo $(docker rm %; echo "removed!")'
+}
+
+docker-container-remove-all-non-running() {
+    docker ps -a | grep -v ^CONTAINER | grep Exit | awk '{print $1}' | xargs -rI % bash -c 'echo $(docker kill %; echo "killed!"); echo $(docker rm %; echo "removed!")'
+}
+
+docker-container-remove-pattern() {
+    PATTERN=$@
+    docker-container-kill-pattern ${PATTERN}
+    docker-container-grep ${PATTERN} | awk '{print $1}' | xargs -rI % bash -c 'echo $(docker rm %; echo "removed!")'
+}
+
+
+docker-logs() {
+    PATTERN=$@
+    docker logs $(docker-container-grep ${PATTERN} | awk '{print $1}')
+}
+
+docker-image-grep() {
+    PATTERN=$@
+    docker images | grep ${PATTERN} | grep -v ^REPOSITORY
+}
+
+# docker-image-most-recent() {
+#     docker images | grep -v ^REPOSITORY | head -n1 | awk '{print $3}'
+# }
+
+# docker-image-remove-all() {
+#     docker-container-remove-all
+#     docker images -a | grep -v ^REPOSITORY | awk '{print $3}' | xargs -rI % bash -c 'echo $(docker rmi %; echo "removed!");'
+# }
+
+docker-image-remove-orphan() {
+    docker images | grep "<none>" | awk '{print $3}' | xargs -rI % bash -c 'echo $(docker rmi %; echo "removed!");'
+}
+
+docker-image-remove-pattern() {
+    PATTERN=$@
+    docker-image-grep ${PATTERN} | awk '{print $1}' | xargs -rI % bash -c 'echo $(docker rmi %; echo "removed!");'
+}
+
+docker-proxy (){
+    docker run -d -p 9050:9050 --name torproxy jess/tor-proxy
+}
+
+docker-portainer() {
+    docker run -d -p 9099:9000 --restart always \
+        -v /var/run/docker.sock:/var/run/docker.sock \
+        -v /opt/portainer:/data portainer/portainer
+}

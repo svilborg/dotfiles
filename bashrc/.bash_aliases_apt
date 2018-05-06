@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # ~/bashrc/.bash_apt: Apt Aliases
 
 #--------------------Apt Get-----------------------------------------------------------
@@ -59,8 +60,8 @@ function apt-list-repos () {
             echo ""
 
             for APT in `find /etc/apt/ -name \*.list`; do
-                grep -o "^deb.*" $APT | while read ENTRY ; do
-                    echo $ENTRY
+                grep -o "^deb.*" ${APT} | while read ENTRY ; do
+                    echo ${ENTRY}
                 done
             done
         ;;
@@ -69,8 +70,8 @@ function apt-list-repos () {
             echo ""
 
             for APT in `find /etc/apt/ -name \*.list`; do
-                grep -o "^deb-src.*" $APT | while read ENTRY ; do
-                    echo $ENTRY
+                grep -o "^deb-src.*" ${APT} | while read ENTRY ; do
+                    echo ${ENTRY}
                 done
             done
         ;;
@@ -79,8 +80,8 @@ function apt-list-repos () {
             echo ""
 
             for APT in `find /etc/apt/ -name \*.list`; do
-                grep -o "^deb .*" $APT | while read ENTRY ; do
-                    echo $ENTRY
+                grep -o "^deb .*" ${APT} | while read ENTRY ; do
+                    echo ${ENTRY}
                 done
             done
         ;;
@@ -95,7 +96,7 @@ show-kernels () {
     echo ""
     echo "Installed Kernels: "
     echo ""
-    for i in $ALL_KERNELS ; do
+    for i in ${ALL_KERNELS} ; do
         echo -e ${COLOR_GRAY} $i ${COLOR_NC}
     done
 

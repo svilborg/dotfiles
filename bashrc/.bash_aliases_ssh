@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# ./includes/.bas_aliases_ssh
+
+ssh_key() {
+    echo ~/.ssh/id_rsa
+}
+
+ssh_public_key() {
+    echo $(ssh_key).pub
+}
+
+ssh_public_key_exist() {
+    [[ -f $(ssh_public_key) ]]
+}
+
+ssh_create_key() {
+    if [[ ! -d ~/.ssh ]]; then
+        mkdir ~/.ssh/
+    fi
+
+    ssh_public_key_exist \
+        || ssh-keygen -f $(ssh_key) -t rsa -N '' 
+
+}
+
+ssh_verify_conn() {
+    local user=$1
+    local host=$2
+
+    ssh -o BatchMode=yes "$user@$host" true
+}
+
+ssh_copy_keys() {
+    local user=$1
+    local host=$2
+
+    ssh-copy-id ${user}@${host}
+}
+
+set_ssh_connection_with_keys() {
+    local user=$1
+    local host=$2
+
+    ssh_create_key
+
+    ssh_verify_conn ${user} ${host} \
+        || ssh_copy_keys ${user} ${host}
+}

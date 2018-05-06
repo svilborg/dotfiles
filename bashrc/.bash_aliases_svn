@@ -1,4 +1,4 @@
-# ~/bashrc/.bash_aliases_svn: SVN Commands Bash Aliases
+#!/usr/bin/env bash
 
 # Colorize SVN
 function svncolor {
@@ -86,6 +86,6 @@ svnmulti () {
     for DIR in */
     do
       echo "======== \"$DIR\""
-      svn $SVN_CMD $@"$DIR"
+      svn ${SVN_CMD} $@"$DIR"
     done
 }

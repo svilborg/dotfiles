@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+
+# remove laravel* containers
+lara-rm ()
+{
+    echo 'Removing ALL containers associated with laradock_'
+    docker ps -a | awk '{ print $1,$2 }' | grep laradock | awk '{print $1}' | xargs -I {} docker rm -f {}
+}
+
+# remove laravel* containers
+# remove laravel_* images
+lara-rmi()
+{
+    lara-rm
+
+    # remove ALL images associated with laradock_
+    # does NOT delete laradock/* which are hub images
+    echo 'Removing ALL images associated with laradock_'
+    docker images | awk '{print $1,$2,$3}' | grep laradock_ | awk '{print $3}' | xargs -I {} docker rmi {}
+
+    echo 'Listing all laradock docker hub images...'
+    docker images | grep laradock
+
+    echo 'lara-rmi completed'
+}
+
+
+lara-ls ()
+{
+    echo "Laradock containers "
+    docker ps -a | awk '{ print $1,$2,$4,$5 }' | grep laradock_
+}
+
+lara-up ()
+{
+    echo "Laradock up "
+    docker-compose up -d $@
+}
+
+lara-down ()
+{
+    echo "Laradock down "
+    docker-compose down $@
+}
+
+lara-con ()
+{
+    echo "Connect to container"
+    docker exec -t -i laradock_$@_1 bash
+}
+
+lara-ws ()
+{
+    echo "Connect to WS"
+    docker exec --user=laradock -ti laradock_workspace_1 bash
+}
+
+lara-ws-root ()
+{
+    echo "Connect to WS"
+    docker exec -t -i laradock_workspace_1 bash
+}
+
+lara-build ()
+{
+    if [[ -z $@ ]]; then
+        echo "Select images to rebuild"
+        return
+    fi
+    echo "Rebuilding laradock images"
+    docker-compose build $@
+}

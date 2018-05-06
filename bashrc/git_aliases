@@ -1,0 +1,86 @@
+
+# Git aliases 
+# Based on : https://github.com/GitAlias/gitalias/blob/master/gitalias.txt
+
+[alias]
+
+    # basic commands
+    a = add
+    ap = add -p     aa = add --all
+    c = commit --verbose
+    ca = commit -a --verbose
+    cm = commit -m
+    cam = commit -a -m
+    co = checkout
+    cob = checkout -b
+    m = commit --amend --verbose
+    p = pull
+    s = status -s
+    
+    # diffs
+    d = diff
+    ds = diff --stat
+    dc = diff --cached
+    diff-all = !"for name in $(git diff --name-only $1); do git difftool $1 $name & done"
+    diff-changes = diff --name-status -r
+    diff-stat = diff --stat --ignore-space-change -r
+
+    # list branches sorted by last modified
+    b = "!git for-each-ref --sort='-authordate' --format='%(authordate)%09%(objectname:short)%09%(refname)' refs/heads | sed -e 's-refs/heads/--'"
+
+    # list aliases
+    ; la = "!git config -l | grep alias | cut -c 7-"
+    aliases = "!git config --get-regexp '^alias\\.' | cut -c 7- | sed 's/ / = /'"
+
+    # loggings
+    l = log --pretty=format:"%C(yellow)%h\\ %ad%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --date=short
+    lk = log --graph --topo-order --abbrev-commit --date=short --decorate --all --boundary --pretty=format:'%Cgreen%ad %Cred%h%Creset -%C(yellow)%d%Creset %s %Cblue[%cn]%Creset %Cblue%G?%Creset'
+
+    log-graph = log --graph --all  --decorate --oneline
+    log-standup = !git log --since yesterday --author $(git config user.email) --pretty=short
+
+    #  File logs
+    filelog = log -u
+    fl = log -u
+
+    # churn
+    churn = !git log --all --find-copies --find-renames --name-only --format='format:' "$@" | sort | grep -v '^$' | uniq -c | sort | awk 'BEGIN {print "count\tfile"} {print $1 "\t" $2}' | sort -g
+
+
+    ### LOOKUP ALIASES ###
+
+    # whois: given a string for an author, try to figure out full name and email:
+    whois = "!sh -c 'git log --regexp-ignore-case -1 --pretty=\"format:%an <%ae>\n\" --author=\"$1\"' -"
+
+    # Given any git object, try to show it briefly
+    whatis = show --no-patch --pretty='tformat:%h (%s, %ad)' --date=short
+
+    # Show who contributed with summarized changes
+    who = shortlog --summary --
+
+    # Show who contributed, in descending order by number of commits
+    whorank = shortlog --summary --numbered --no-merges
+
+
+    ##
+    # Reset & Undo
+    ##
+
+    # Reset and undo aliases are ways to move backwards on the commit chain.
+    # We find that novices prefer the wording "undo"; experts prefer "reset".
+    reset-commit       = reset --soft HEAD~1
+    reset-commit-hard  = reset --hard HEAD~1
+    reset-commit-clean = !git reset --hard HEAD~1 && git clean -fd
+    reset-to-pristine   = !git reset --hard && git clean -ffdx
+    reset-to-upstream  = !git reset --hard $(git upstream-name)
+
+    # Nicknames
+    uncommit = reset --soft HEAD~1
+    unadd = reset HEAD
+    unstage = reset HEAD
+
+    searchcommits = !"f() { query=\"$1\"; shift; git log -S\"$query\" \"$@\"; }; f \"$@\""
+
+    #Tags
+    lasttag = describe --tags --abbrev=0
+    lt = describe --tags --abbrev=0

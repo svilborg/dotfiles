@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+node-install () {
+    curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+    sudo apt-get install -y build-essential
+    sudo apt-get install -y nodejs
+}
+
+node-install-lts () {
+    curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+    sudo apt-get install -y build-essential
+    sudo apt-get install -y nodejs
+}
+
+
+nvm-install () {
+    sudo apt-get update
+    sudo apt-get install build-essential libssl-dev
+    curl -sL https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh -o install_nvm.sh
+    echo "Installing nvm .."
+    bash ./install_nvm.sh
+    rm ./install_nvm.sh
+}
