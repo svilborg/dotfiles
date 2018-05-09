@@ -1,0 +1,4 @@
+language: shell
+
+script: 
+  ./php-switch.sh
