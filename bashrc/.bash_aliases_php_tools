@@ -22,10 +22,16 @@
 # composer require balping/artisan-bash-completion
 alias artisan="php artisan"
 
-_artisan()
-{
-    COMPREPLY=(`artisan list:forBash $COMP_LINE`)
-    return 0
+_artisan() {
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    commands=$(artisan  list --format=xml  | grep -E -o "(<command>([^<]*))" \
+    | tr -d ' ' | sed "s/<command>//g")
+
+    if [ $COMP_CWORD == 1 ] ; then
+        COMPREPLY=( $(compgen -W "${commands}" -- ${cur}) )
+        return 0
+    fi
 }
 complete -F _artisan artisan
 
