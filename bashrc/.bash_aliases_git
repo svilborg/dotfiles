@@ -37,3 +37,14 @@ git-import() {
 git-include() {
     git config --global include.path "~/.bashrc_include/git_aliases"
 }
+
+git-merge() {
+    branch_from=("$@")
+    if [[ -z $@ ]]; then
+        branch_from="stage"
+    fi
+    
+    branch_to=$(git rev-parse --abbrev-ref HEAD)
+
+    git checkout ${branch_from} && git pull && git checkout ${branch_to}
+}
