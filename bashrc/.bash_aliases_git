@@ -46,5 +46,5 @@ git-merge() {
     
     branch_to=$(git rev-parse --abbrev-ref HEAD)
 
-    git checkout ${branch_from} && git pull && git checkout ${branch_to}
+    git checkout ${branch_from} && git pull && git checkout ${branch_to} && git merge ${branch_from}
 }
