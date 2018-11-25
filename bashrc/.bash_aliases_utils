@@ -82,3 +82,6 @@ is_installed() {
     fi
 }
 
+function untilfail() {
+    while $@; do :; done
+}
