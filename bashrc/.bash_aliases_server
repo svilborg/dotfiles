@@ -2,7 +2,7 @@
 
 #----------------------------------------------------------------------
 
-_services=('mysql' 'apache2' 'nginx' 'postgresql' 'docker' 'php7.2-fpm')
+_services=('mysql' 'apache2' 'nginx' 'postgresql' 'docker' 'php7.2-fpm' 'apache-htcacheclean' 'memcached' 'bluetooth' 'sendmail' 'virtualbox')
 
 service-switch() {
     args=("$@")
