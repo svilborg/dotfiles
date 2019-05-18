@@ -84,3 +84,6 @@
     #Tags
     lasttag = describe --tags --abbrev=0
     lt = describe --tags --abbrev=0
+
+    score = "!php git-score"
+
